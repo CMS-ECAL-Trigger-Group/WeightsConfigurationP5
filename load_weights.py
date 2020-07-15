@@ -4,11 +4,19 @@ import sys
 import cx_Oracle
 import random
 from pprint import pprint
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-t", "--tag", type=str, help="Tag")
+parser.add_argument("--wg",  type=str, help="Weight group file")
+parser.add_argument("--wi",  type=str, help="Weight ID map")
+args = parser.parse_args()
+tag= args["tag"]
 
 conn_str = u'CMS_ECAL_CONF/0r4cms_3c4lc0nf@cms_tstore'
 
-wgroups = "EcalTPGWeightGroup_perstrip.txt"
-wids = "EcalTPGWeightIdMap_perstrip.txt"
+wgroups = args.wg
+wids = args.wi
 logicid_file = "logicids_EBEE.txt"
 
 group_map = {}
@@ -50,13 +58,13 @@ def main(argv):
 
     # Insert a new wei_conf_version
     insert_info_query = u"INSERT into FE_CONFIG_WEIGHT_INFO (wei_conf_id, tag, number_of_groups, db_timestamp) \
-            VALUES (FE_CONFIG_WEIGHT_SQ.nextval, 'Test_weights_by_strip', {}, CURRENT_TIMESTAMP) ".format(len(weights_values))
+            VALUES (FE_CONFIG_WEIGHT_SQ.nextval, {}, {}, CURRENT_TIMESTAMP) ".format(tag, len(weights_values))
     c.execute(insert_info_query)
     print("N weights", len(weights_values))
 
     # Now get the wei_conf_version
     # Get last version with tag 'Test_weights_by_strip'
-    c.execute("SELECT max(wei_conf_id) from FE_CONFIG_WEIGHT_INFO where Tag='Test_weights_by_strip'")
+    c.execute("SELECT max(wei_conf_id) from FE_CONFIG_WEIGHT_INFO where Tag='{}'".format(tag))
     for row in c:
         wei_conf_id = row[0]
     print "New weight conf_id: ", wei_conf_id
