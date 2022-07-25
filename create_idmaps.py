@@ -17,7 +17,7 @@ for lid in gmap.stripid:
 
 with open(args.inputfile) as lm: 
     for l in lm.readlines():
-        if l.startswith("#"): continue
+        if l.startswith("#") or len(l)==0 : continue
         n = l.strip().split(" ")
         # Now apply the rules
         if n[0] == "ALL":
