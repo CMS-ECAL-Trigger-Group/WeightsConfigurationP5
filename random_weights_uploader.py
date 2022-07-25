@@ -4,7 +4,11 @@ import sys
 import cx_Oracle
 import random
 
-conn_str = u'CMS_ECAL_CONF/0r4cms_3c4lc0nf@cms_tstore'
+if len(sys.argv) < 2:
+  print("Missing CMS_ECAL_CONF password!")
+  exit(1)
+
+conn_str = u'CMS_ECAL_CONF/{}@cms_tstore'.format(sys.argv[1])
 
 def main(argv):
 

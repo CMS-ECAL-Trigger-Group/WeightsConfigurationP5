@@ -18,3 +18,19 @@ EE and EB are split because the mapping in the confDB is different between them.
 scripts to have a look at which column of the `channelview` table of the ConfDB is used to retrive the logicid. This
 is the same mapping used by the [ECALTPGParamBuilder](https://github.com/cms-sw/cmssw/blob/master/CalibCalorimetry/EcalTPGTools/plugins/EcalTPGParamBuilder.cc#L846).
     
+
+```bash
+python logicid_retriver_EB.py  ***password***
+python logicid_retriver_EE.py  ***password***
+```
+
+## Weight configuration
+
+The ECAL TPG weight configuration is based on WeightGroups and WeightIDMap: 
+
+- WeightGroups:  set of 5 encoded numbers representing the weights
+- WeightIDMap: map between each stripid/logicid to a weight group. 
+
+This structure is kept in the confDB and condDB. Two files representing this structure are needed for the
+ECALTPGParamBuilder to build the DB tags. 
+
