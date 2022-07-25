@@ -10,10 +10,15 @@ ECAL. For weights gymnastic we would need only the following information:
 - `logidid` used to identify the strip in the ConfDB, the online P5 DB for configuration
 
 The `stripid`, `cmsswid` and the mapping needed to idenitify the logicid are extracted from the full maps in
-`ChannelNumbering*.csv` and saved for convenience in `params_EB.txt` and `params_EE.txt`. 
+`ChannelNumbering*.csv` and saved for convenience in `params_EB.csv` and `params_EE.csv`. 
 
-Then, the confDB is directly queried to the fetch the `logicids` in the DB. To perform this task the scripts
-`logicid_retriver_E*.py` are used. The output is `params_E*_logicid.txt` files. 
+To extract these files execute the script:
+```bash
+python get_params_EEEB.py
+```
+
+Then, the confDB is directly queried to the fetch the `logicids` in the DB. To perform this task the script
+`logicid_retriver.py` are used. The output is `params_E*_logicid.txt` files. 
 EE and EB are split because the mapping in the confDB is different between them. Please checkout the `logicid_retriver`
 scripts to have a look at which column of the `channelview` table of the ConfDB is used to retrive the logicid. 
 
@@ -24,8 +29,24 @@ This is the same mapping used by the [ECALTPGParamBuilder](https://github.com/cm
     
 
 ```bash
-python logicid_retriver_EB.py  ***password***
-python logicid_retriver_EE.py  ***password***
+python logicid_retriver.py  -h
+usage: logicid_retriver.py [-h] -i INPUTFILE -o OUTPUTFILE -s SUBDET -p
+                           PASSWORD
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUTFILE, --inputfile INPUTFILE
+                        Input parameters file
+  -o OUTPUTFILE, --outputfile OUTPUTFILE
+                        Output file
+  -s SUBDET, --subdet SUBDET
+                        Subdetector EB/EE
+  -p PASSWORD, --password PASSWORD
+                        ConfDB password
+                        
+python logicid_retriver.py  -i params_EB.csv -o params_EB_logicid.csv -s EB -p ****
+python logicid_retriver.py  -i params_EE.csv -o params_EE_logicid.csv -s EE -p ****
+
 ```
 
 ## Weight configuration
