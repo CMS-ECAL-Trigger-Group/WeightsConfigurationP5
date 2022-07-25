@@ -87,6 +87,68 @@ perform the approximation in the best way:
 
 ### Weight configuration creator
 
+A script, `create_idmaps.py` is provided to help populating the mapping between strips and WeightGroups. 
+The script requires a simple txt configuration with a special syntax: 
+
+```
+ALL 0
+SUBDET EB 1
+SUBDET EE 2
+SUBDET EE+ 3
+SUBDET EE- 4
+FED 610 5
+TT 1 6
+FEDTT 610 1 7
+STRIP 303176 6
+```
+
+The mapping is created by applying the rules specified one line after the other. 
+The index of the WeightGroup is linked to the specified groups of strips. 
+
+- ALL: link the WeightGroup to all the strips, useful to be applied as the first rule. 
+- SUBDET: [EB/EE/EE+/EE-] assign WeightGroup to all the strips in a subdetector
+- FED: specify a single FED
+- TT: specify a weight group for the strips in the same TT(EB) or CCU(EE) in all the FEDs
+- FEDTT: specify a weight group for the strips in a specific TT of a single FED
+- STRIP: specify a specific Strip
+
+The script is called like: 
+
+```bash
+
+ python create_idmaps.py -h
+usage: create_idmaps.py [-h] [-l LOGICID] -i INPUTFILE -o OUTPUTFILE
+
+options:
+  -h, --help            show this help message and exit
+  -l LOGICID, --logicid LOGICID
+                        Logicid mapping
+  -i INPUTFILE, --inputfile INPUTFILE
+                        Input file
+  -o OUTPUTFILE, --outputfile OUTPUTFILE
+                        Output file
+
+
+python create_idmaps.py -l params_EBEE_logicid.csv -i idmap_example.txt -o WeighIdMap_example.txt
+
+```
+
+The WeightGroup file must be created manually specifying in each line the corresponding group of weights. 
+
+```bash
+
+$ cat WeightGroup_custom.tx
+86 99 17 32 22 --> weight group 0
+86 96 17 32 25 --> weight group 1
+86 97 16 32 25
+87 96 17 31 25
+85 96 17 33 25
+...
+```
+
+The WeightGroup and WeightID files can then be uploaded manually in the DB (see next section) or used as inputs for the
+ECALTPGParamsBuilder code (**recommended!!**).
+
 ### Weight manual upload
 
 A script has been prepared to manually load a set of weights in the ConfDB for manual tests on the system. 
