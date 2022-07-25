@@ -11,6 +11,7 @@ parser.add_argument("-d", "--dry", action="store_true", help="Dry run")
 parser.add_argument("-t", "--tag", type=str, help="Tag", required=True)
 parser.add_argument("--wg",  type=str, help="Weight group file", required=True)
 parser.add_argument("--wi",  type=str, help="Weight ID map", required=True)
+parser.add_argument("-l","--logicid", help="Logicid mapping", default="params_EBEE_logicid.csv")
 parser.add_argument("-p","--password", type=str, help="ConfDB password", required=True)
 args = parser.parse_args()
 tag= args.tag
@@ -20,14 +21,14 @@ conn_str = u'CMS_ECAL_CONF/{}@cms_tstore'.format(args.password)
 
 wgroups = args.wg
 wids = args.wi
-logicid_file = "logicids_EBEE.txt"
+logicid_file = args.logicid
 
 weights_values = []
 weights_logicid = {}
 logicid_map = {}
 
 with open(logicid_file) as lm: 
-    for l in lm.readlines():
+    for l in lm.readlines()[1:]:
         n = l.strip().split(",")
         logicid_map[n[0]] = n[5].strip()
 

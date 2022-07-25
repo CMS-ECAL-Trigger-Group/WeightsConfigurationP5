@@ -48,6 +48,7 @@ python logicid_retriver.py  -i params_EB.csv -o params_EB_logicid.csv -s EB -p *
 python logicid_retriver.py  -i params_EE.csv -o params_EE_logicid.csv -s EE -p ****
 
 ```
+Finally all the logicids have been concatenated in a single file **params_EBEE_logicids.csv**.
 
 ## Weight configuration
 
@@ -68,16 +69,20 @@ A script has been prepared to manually load a set of weights in the ConfDB for m
 configuration should pass through the ECALTPGParamBuilder**. 
 
 ```bash
-python  load_weights.py -h
-usage: load_weights.py [-h] [-d] -t TAG --wg WG --wi WI --p P
+ python load_weights.py -h
+usage: load_weights.py [-h] [-d] -t TAG --wg WG --wi WI [-l LOGICIDS] -p
+                       PASSWORD
 
 optional arguments:
-  -h, --help           show this help message and exit
-  -d, --dry            Dry run
-  -t TAG, --tag TAG    Tag
-  --wg WG              Weight group file
-  --wi WI              Weight ID map
-  --p P, --password P  ConfDB password
+  -h, --help            show this help message and exit
+  -d, --dry             Dry run
+  -t TAG, --tag TAG     Tag
+  --wg WG               Weight group file
+  --wi WI               Weight ID map
+  -l LOGICID, --logicid LOGICID
+                        Logicid mapping
+  -p PASSWORD, --password PASSWORD
+                        ConfDB password
 
 ```
 
@@ -90,8 +95,8 @@ are installed in the system.
 For example: 
 
 ```bash
-python load_weights.py -t TEST --dry --wg output_files/EcalTPGWeightGroup_2018_PU50_S2.txt --wi
-output_files/EcalTPGWeightIdMap_2018_PU50_S2.txt --password ******
+python load_weights.py -t TEST --dry --wg output_files/EcalTPGWeightGroup_2018_PU50_S2.txt 
+    --wi output_files/EcalTPGWeightIdMap_2018_PU50_S2.txt --password ******
 
 QUERY:  INSERT into FE_CONFIG_WEIGHT_INFO (wei_conf_id, tag, number_of_groups, db_timestamp) VALUES                     (FE_CONFIG_WEIGHT_SQ.nextval, 'TEST', 627, CURRENT_TIMESTAMP)
 N weights 627
