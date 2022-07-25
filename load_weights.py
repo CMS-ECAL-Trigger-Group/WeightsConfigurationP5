@@ -7,11 +7,12 @@ from pprint import pprint
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-t", "--tag", type=str, help="Tag")
-parser.add_argument("--wg",  type=str, help="Weight group file")
-parser.add_argument("--wi",  type=str, help="Weight ID map")
+parser.add_argument("-d", "--dry", action="store_true", help="Dry run")
+parser.add_argument("-t", "--tag", type=str, help="Tag", required=True)
+parser.add_argument("--wg",  type=str, help="Weight group file", required=True)
+parser.add_argument("--wi",  type=str, help="Weight ID map", required=True)
 args = parser.parse_args()
-tag= args["tag"]
+tag= args.tag
 
 conn_str = u'CMS_ECAL_CONF/0r4cms_3c4lc0nf@cms_tstore'
 
@@ -19,8 +20,7 @@ wgroups = args.wg
 wids = args.wi
 logicid_file = "logicids_EBEE.txt"
 
-group_map = {}
-weights_values = {}
+weights_values = []
 weights_logicid = {}
 logicid_map = {}
 
@@ -30,26 +30,22 @@ with open(logicid_file) as lm:
         logicid_map[n[0]] = n[5].strip()
 
 
+
 # Make the weights groups unique
 # We need to save the position 
 with open(wids) as wf:
-    nwg = 0
-    for i, l in enumerate(wf.readlines()):
+    for l in wf:
         ws = tuple(l.strip().split(" "))
-        if ws not in weights_values: 
-            weights_values[ws] = nwg
-            nwg +=1
-        
-        group_map[i] = weights_values[ws]
-
+        weights_values.append(ws)
+         
 with open(wgroups) as wg:
-    for i, l in enumerate(wg.readlines()):
+    for l in wg:
         d = l.strip().split(" ")
         if d[0] not in logicid_map:
             print "Problem! Missing logicid for ",d[0]
             continue
         logicid = logicid_map[d[0]]
-        weights_logicid[logicid] = group_map[int(d[1])]
+        weights_logicid[logicid] = int(d[1])
 
 def main(argv):
 
@@ -57,10 +53,11 @@ def main(argv):
     c = conn.cursor()
 
     # Insert a new wei_conf_version
-    insert_info_query = u"INSERT into FE_CONFIG_WEIGHT_INFO (wei_conf_id, tag, number_of_groups, db_timestamp) \
-            VALUES (FE_CONFIG_WEIGHT_SQ.nextval, {}, {}, CURRENT_TIMESTAMP) ".format(tag, len(weights_values))
-    c.execute(insert_info_query)
-    print("N weights", len(weights_values))
+    insert_info_query = u"INSERT into FE_CONFIG_WEIGHT_INFO (wei_conf_id, tag, number_of_groups, db_timestamp) VALUES\
+                     (FE_CONFIG_WEIGHT_SQ.nextval, '{}', {}, CURRENT_TIMESTAMP)".format(tag, len(weights_values))
+    print"QUERY: ", insert_info_query
+    if not args.dry: c.execute(insert_info_query)
+    print"N weights", len(weights_values)
 
     # Now get the wei_conf_version
     # Get last version with tag 'Test_weights_by_strip'
@@ -70,20 +67,21 @@ def main(argv):
     print "New weight conf_id: ", wei_conf_id
 
     # Inserting weight group
-    for Ws, groupid in weights_values.items():
+    for groupid, Ws in enumerate(weights_values):
         #### NB. Weights order is inverted! From right to left.
         insert_query = u"INSERT into FE_WEIGHT_PER_GROUP_DAT (wei_conf_id, group_id, W4,W3,W2,W1,W0) \
                 VALUES ({0}, {1}, {2},{3},{4},{5},{6}) ".format(wei_conf_id, groupid, Ws[0], Ws[1],Ws[2],Ws[3],Ws[4])
-        print(insert_query)
-        c.execute(insert_query)
+        print "QUERY: ", insert_query
+        if not args.dry: c.execute(insert_query)
 
    
     # Inserting the logic_id weight _dat
     for lid, groupid in weights_logicid.items():
         insert_query = u"INSERT into FE_CONFIG_WEIGHT_DAT (wei_conf_id, logic_id, group_id) \
                 VALUES ({0},{1},{2})".format(wei_conf_id, lid, groupid)
-        print(insert_query)
-        c.execute(insert_query)
+        print"QUERY: ", insert_query
+        if not args.dry: c.execute(insert_query)
+
 
     conn.commit()
 
