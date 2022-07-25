@@ -50,6 +50,8 @@ python logicid_retriver.py  -i params_EE.csv -o params_EE_logicid.csv -s EE -p *
 ```
 Finally all the logicids have been concatenated in a single file **params_EBEE_logicids.csv**.
 
+The structure of the weights configuration is the same for Even and Odd weights. 
+
 For a general introduction to the ECAL trigger primitive generation have a look at [Davide's thesis](https://dvalsecc.web.cern.ch/dvalsecc/PhD_Thesis/thesis_Valsecchi_final.pdf).
 
 ## Weight configuration
@@ -62,15 +64,22 @@ The ECAL TPG weight configuration is based on WeightGroups and WeightIDMap:
 This structure is kept in the confDB and condDB. Two files representing this structure are needed for the
 ECALTPGParamBuilder to build the DB tags. 
 
-In the configuration created by this repo and for the ECALTPGParamBuilder inputs the weights must be encoded, but
+
+In the configuration created by this repo is used with the ECALTPGParamBuilder:  the weights must be encoded, and
 specified in the natural ordering (w0,w1,w2,w3,w4). Moreover, the 8th bit of weight, which signal to the electronics the
 position of the peak must NOT be included, since it is automatically added by the configuration code. 
+
+If the weights are manually loaded in the ConfDB instead, the 8th bit of the peak weight should be activate
+manually. The order of the weights will be automatically inverted by the `load_weights.py` script. 
+
+Practically, the weights must always be ordered in the natural way (w0,w1,w2,w3,w4) when written in the txt
+configuration. 
 
 ### Weights encoding:
 
 The weights are encoded following the formula:
 
-    W_encoded (1 - sign(W))*64 + W*64
+    W_encoded = (1 - sign(W))*64 + W*64
 
 Then a nearest integer approximation is performed. Since the sum of the 5 weights must be always 0, there is a special code to
 perform the approximation in the best way:
@@ -134,6 +143,15 @@ QUERY:  INSERT into FE_CONFIG_WEIGHT_DAT (wei_conf_id, logic_id, group_id)      
 QUERY:  INSERT into FE_CONFIG_WEIGHT_DAT (wei_conf_id, logic_id, group_id)                 VALUES (None,1151052405,584)
 QUERY:  INSERT into FE_CONFIG_WEIGHT_DAT (wei_conf_id, logic_id, group_id)                 VALUES (None,1151052404,575)
 [.............]
+```
+
+### PU weights
+
+There is a special macro to upload the PU optimized weights from the files produced by the PU optimization. 
+
+```bash
+python prepare_config_PUweights.py --wEE txt_files/strip_weights_Sep18_PU50_S2-30_fullEE_encoded.tx --wEB
+txt_files/strip_weights_Sep18_PU50_S2-30_fullEB_encoded.txt --PU 50 --S 2 -o PU50_S2
 ```
 
 
