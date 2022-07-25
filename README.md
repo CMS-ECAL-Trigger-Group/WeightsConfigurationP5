@@ -1,4 +1,10 @@
-# Weights groups preparation
+# Weights configuration preparation
+
+This repository contains utilities to prepare the ECAL TPG weights configuration of the online and offline CMS world. 
+The structure of the weights configuration is the same for Even and Odd weights. 
+
+For a general introduction to the ECAL trigger primitive generation have a look at [Davide's thesis](https://dvalsecc.web.cern.ch/dvalsecc/PhD_Thesis/thesis_Valsecchi_final.pdf).
+
 
 ## Strip parameters
 
@@ -49,10 +55,6 @@ python logicid_retriver.py  -i params_EE.csv -o params_EE_logicid.csv -s EE -p *
 
 ```
 Finally all the logicids have been concatenated in a single file **params_EBEE_logicids.csv**.
-
-The structure of the weights configuration is the same for Even and Odd weights. 
-
-For a general introduction to the ECAL trigger primitive generation have a look at [Davide's thesis](https://dvalsecc.web.cern.ch/dvalsecc/PhD_Thesis/thesis_Valsecchi_final.pdf).
 
 ## Weight configuration
 
