@@ -148,8 +148,11 @@ $ cat WeightGroup_custom.tx
 ...
 ```
 
-The WeightGroup and WeightID files can then be uploaded manually in the DB (see next section) or used as inputs for the
+The WeightGroup and WeightIDMap files can then be uploaded manually in the DB (see next section) or used as inputs for the
 ECALTPGParamsBuilder code (**recommended!!**).
+
+The WeightGroup and WeightIDMap files can also be converted directly to condDB tags in sqlite format by using CMSSW
+scripts. For more documentation about this topic see [ETT Analyzer page](https://github.com/CMS-ECAL-Trigger-Group/ETTAnalyzer/tree/main/ETTAnalyzer/weights).
 
 ### Weight manual upload
 
