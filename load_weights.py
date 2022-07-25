@@ -11,10 +11,12 @@ parser.add_argument("-d", "--dry", action="store_true", help="Dry run")
 parser.add_argument("-t", "--tag", type=str, help="Tag", required=True)
 parser.add_argument("--wg",  type=str, help="Weight group file", required=True)
 parser.add_argument("--wi",  type=str, help="Weight ID map", required=True)
+parser.add_argument("-p","--password", type=str, help="ConfDB password", required=True)
 args = parser.parse_args()
 tag= args.tag
 
-conn_str = u'CMS_ECAL_CONF/0r4cms_3c4lc0nf@cms_tstore'
+
+conn_str = u'CMS_ECAL_CONF/{}@cms_tstore'.format(args.password)
 
 wgroups = args.wg
 wids = args.wi
@@ -29,16 +31,14 @@ with open(logicid_file) as lm:
         n = l.strip().split(",")
         logicid_map[n[0]] = n[5].strip()
 
-
-
 # Make the weights groups unique
 # We need to save the position 
-with open(wids) as wf:
+with open(wgroups) as wf:
     for l in wf:
         ws = tuple(l.strip().split(" "))
         weights_values.append(ws)
          
-with open(wgroups) as wg:
+with open(wids) as wg:
     for l in wg:
         d = l.strip().split(" ")
         if d[0] not in logicid_map:
