@@ -1,4 +1,4 @@
-# Weights configuration preparation
+# ECAL TPG Weights configuration preparation
 
 This repository contains utilities to prepare the ECAL TPG weights configuration of the online and offline CMS world. 
 The structure of the weights configuration is the same for Even and Odd weights. 
@@ -6,7 +6,53 @@ The structure of the weights configuration is the same for Even and Odd weights.
 For a general introduction to the ECAL trigger primitive generation have a look at [Davide's thesis](https://dvalsecc.web.cern.ch/dvalsecc/PhD_Thesis/thesis_Valsecchi_final.pdf).
 
 
-## Strip parameters
+
+## Weight configuration lookup
+
+Once a weight configuration is the ConfDB the script `query_weight_config.py` can be used to query WeightGroups and
+WeightIdMap from a specific version. The script creates the txt files in the standard configuration to be used for the
+ECALTPGParamBuilder or to build custom CondDB tags. 
+
+```bash
+python query_weight_config.py -h
+usage: query_weight_config.py [-h] -w WEIGHT_CONFIG -wt WEIGHT_TYPE
+                              [-l LOGICID] -o OUTPUTNAME -p PASSWORD
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w WEIGHT_CONFIG, --weight-config WEIGHT_CONFIG
+                        Weight config id
+  -wt WEIGHT_TYPE, --weight-type WEIGHT_TYPE
+                        Weight type [even/odd]
+  -l LOGICID, --logicid LOGICID
+                        Logicid mapping
+  -o OUTPUTNAME, --outputname OUTPUTNAME
+                        Name for the output files
+  -p PASSWORD, --password PASSWORD
+                        ConfDB password
+
+```
+
+For example to query a specific odd weights configuration: 
+
+```bash
+$  python query_weight_config.py --weight-config 324 --weight-type odd -o splashApril22Odd -p **
+Info for Weight config:  324
+Tag: oddweights_killing+tagging_singleSM
+Created on:  2022-04-25 10:47:06.535086
+Number of groups 2
+Groups info
+Group ID: 0, Weights: 0,0,0,128,0
+Group ID: 1, Weights: 68,0,0,191,125
+Querying the mapping and saving to file
+DONE
+
+
+```
+
+
+## Weight configuration creation
+### Strip parameters
 
 The files `ChannelNumberingEB.csv` and `ChannelNumberingEE.csv` contain a full mapping of all the strips in EB and EE of
 ECAL. For weights gymnastic we would need only the following information: 
@@ -56,7 +102,7 @@ python logicid_retriver.py  -i params_EE.csv -o params_EE_logicid.csv -s EE -p *
 ```
 Finally all the logicids have been concatenated in a single file **params_EBEE_logicids.csv**.
 
-## Weight configuration
+### Weight configuration structure
 
 The ECAL TPG weight configuration is based on WeightGroups and WeightIDMap: 
 
@@ -77,7 +123,7 @@ manually. The order of the weights will be automatically inverted by the `load_w
 Practically, the weights must always be ordered in the natural way (w0,w1,w2,w3,w4) when written in the txt
 configuration. 
 
-### Weights encoding:
+#### Weights encoding:
 
 The weights are encoded following the formula:
 
@@ -87,7 +133,7 @@ Then a nearest integer approximation is performed. Since the sum of the 5 weight
 perform the approximation in the best way:
 [script](https://gitlab.cern.ch/cms-ecal-dpg/ecall1algooptimization/-/blob/master/PileupMC/weights_encoder.py)
 
-### Weight configuration creator
+### Weight IdMap creator
 
 A script, `create_idmaps.py` is provided to help populating the mapping between strips and WeightGroups. 
 The script requires a simple txt configuration with a special syntax: 
@@ -212,7 +258,8 @@ QUERY:  INSERT into FE_CONFIG_WEIGHT_DAT (wei_conf_id, logic_id, group_id)      
 [.............]
 ```
 
-### PU weights
+### Special configurations
+#### PU weights
 
 There is a special macro to upload the PU optimized weights from the files produced by the PU optimization. 
 
@@ -222,7 +269,7 @@ txt_files/strip_weights_Sep18_PU50_S2-30_fullEB_encoded.txt --PU 50 --S 2 -o PU5
 ```
 
 
-### Random weights creator
+#### Random weights creator
 
 The script `random_weights_uploader.py` creates a special configuration in which each script gets a random set of
 weights. 
@@ -231,3 +278,4 @@ Since the weights are not normalized to 0 this configuration creates large energ
 ```bash
 python random_weights_uploader.py
 ```
+
