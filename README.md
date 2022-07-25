@@ -5,7 +5,7 @@
 The files `ChannelNumberingEB.csv` and `ChannelNumberingEE.csv` contain a full mapping of all the strips in EB and EE of
 ECAL. For weights gymnastic we would need only the following information: 
 
-- `stripid` used to identify the strip in the Weights studies (I'm not really sure about the origin of this ID)
+- `stripid` used to identify the strip in the Weights studies and in the input files for ECALTPGParamBuilder
 - `cmsswid` general identifier used in CMSSW and CondDB (offline DB)
 - `logidid` used to identify the strip in the ConfDB, the online P5 DB for configuration
 
