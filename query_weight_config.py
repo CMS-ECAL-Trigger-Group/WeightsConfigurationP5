@@ -52,6 +52,13 @@ for row in c:
     print("Number of groups", row[0])
     
 
+# TP mode info
+if args.weight_type == "odd":
+    c.execute("SELECT * FROM FE_WEIGHT2_MODE_DAT WHERE WEI2_CONF_ID={}".format(args.weight_config))
+    for row in c:
+        for k,v in row.items():
+            print(row)
+    
 # Query weight group
 _query = u"SELECT group_id, W4,W3,W2,W1,W0 from FE_{}_PER_GROUP_DAT where {}={}".format(
         weight_table, confid_col, args.weight_config)
