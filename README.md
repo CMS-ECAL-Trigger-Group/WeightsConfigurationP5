@@ -9,7 +9,7 @@ For a general introduction to the ECAL trigger primitive generation have a look 
 
 ## Weight configuration lookup
 
-Once a weight configuration is the ConfDB the script `query_weight_config.py` can be used to query WeightGroups and
+Once a weight configuration is the ConfDB the script `query_weight_config.py` can be used to query the TPmode, the WeightGroups and
 WeightIdMap from a specific version. The script creates the txt files in the standard configuration to be used for the
 ECALTPGParamBuilder or to build custom CondDB tags. 
 
@@ -36,11 +36,29 @@ optional arguments:
 For example to query a specific odd weights configuration: 
 
 ```bash
-$  python query_weight_config.py --weight-config 324 --weight-type odd -o splashApril22Odd -p **
-Info for Weight config:  324
-Tag: oddweights_killing+tagging_singleSM
-Created on:  2022-04-25 10:47:06.535086
+$  python query_weight_config.py --weight-config 328 --weight-type odd -o splashApril22Odd -p **
+Info for Weight config:  328
+Tag: oddweights_killtag_singleSM
+Created on:  2022-04-27 22:58:25.652198
 Number of groups 2
+###################################
+TP MODE flags
+        Enable EB Odd filter  1
+        Enable EE Odd filter  0
+        Enable EB Odd Peak finder  1
+        Enable EE Odd Peak finder  0
+        Disable EB Even peak finder  0
+        Disable EE Even peak finder  0
+        Fenix EB Strip output  2   # 0=even, 1=odd, 2=larger, 3=sum
+        Fenix EE Strip output  0   # 0=even, 1=odd, 2=larger, 3=sum
+        Fedix EB Strip infobit2  1   #odd>event strip flag
+        Fenix EE Strip infobit2  0  #odd>event strip flag
+        Fenix EB TCP Output  0   # 0=even sum, 1=larger, 2=even+odd sum
+        Fenix EB TCP infobit1  1  #0=FGVB, 1=odd>even TCP sum
+        Fenix EE TCP Output  0   # 0=even sum, 1=larger, 2=even+odd sum
+        Fenix EE TCP infobit1  0  #0=FGVB, 1=odd>even TCP sum
+#############################
+Weights infos
 Groups info
 Group ID: 0, Weights: 0,0,0,128,0
 Group ID: 1, Weights: 68,0,0,191,125

@@ -54,21 +54,39 @@ for row in c:
 
 # TP mode info
 if args.weight_type == "odd":
+    print("###################################")
+    print("TP MODE flags")
     c.execute("SELECT * FROM FE_WEIGHT2_MODE_DAT WHERE WEI2_CONF_ID={}".format(args.weight_config))
     for row in c:
-        for k,v in row.items():
-            print(row)
-    
+        print("\tEnable EB Odd filter ", row[1])
+        print("\tEnable EE Odd filter ", row[2])
+        print("\tEnable EB Odd Peak finder ", row[3])
+        print("\tEnable EE Odd Peak finder ", row[4])
+        print("\tDisable EB Even peak finder ", row[5])
+        print("\tDisable EE Even peak finder ", row[6])
+        print("\tFenix EB Strip output ", row[7], "  # 0=even, 1=odd, 2=larger, 3=sum")
+        print("\tFenix EE Strip output ", row[8], "  # 0=even, 1=odd, 2=larger, 3=sum")
+        print("\tFedix EB Strip infobit2 ", row[9], "  #odd>event strip flag")
+        print("\tFenix EE Strip infobit2 ", row[10], " #odd>event strip flag")
+        print("\tFenix EB TCP Output ", row[11], "  # 0=even sum, 1=larger, 2=even+odd sum" )
+        print("\tFenix EB TCP infobit1 ", row[12], " #0=FGVB, 1=odd>even TCP sum")
+        print("\tFenix EE TCP Output ", row[13], "  # 0=even sum, 1=larger, 2=even+odd sum" )
+        print("\tFenix EE TCP infobit1 ", row[14], " #0=FGVB, 1=odd>even TCP sum")
+
+print("#############################")
+print("Weights infos")
+        
 # Query weight group
 _query = u"SELECT group_id, W4,W3,W2,W1,W0 from FE_{}_PER_GROUP_DAT where {}={}".format(
         weight_table, confid_col, args.weight_config)
 
 c.execute(_query)
-print("Groups info")
 gfile = open("EcalTPGWeightGroup_"+args.outputname + ".txt","w")
 for row in c:
-    print("Group ID: {}, Weights: {},{},{},{},{}".format(*row))
-    gfile.write("{} {} {} {} {}\n".format(*row[1:]))
+    weights = list(row[1:])
+    weights[3] -= 128 # remove the 8th bit from the 4th weight
+    print("Group ID: {}, Weights: {},{},{},{},{}".format(row[0], *weights))
+    gfile.write("{} {} {} {} {}\n".format(*weights))
 gfile.close()
 
 # Query the ID map
